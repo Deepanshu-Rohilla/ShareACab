@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shareacab/screens/groupscreen/group.dart';
 import 'package:shareacab/services/trips.dart';
-import 'package:shareacab/screens/groupdetailscreen/groupdetails.dart';
 import 'package:intl/intl.dart';
 import 'herocard.dart';
 
@@ -75,7 +74,8 @@ class _TripsListState extends State<TripsList> {
                       child: InkWell(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder:
-                              (context) => GroupDetail(destination, docId, privacy,
+                              (context) => GroupDetails(destination, docId,
+                                  privacy,
                                   start, end, numberOfMembers,data)));
                         },
                         child: Card(

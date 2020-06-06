@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-class GroupDetail extends StatelessWidget {
+class GroupDetails extends StatelessWidget {
 //  static const routeName = '/groupDetails';
 
   final String destination;
@@ -18,7 +18,7 @@ class GroupDetail extends StatelessWidget {
   final numberOfMembers;
   final data;
 
-  GroupDetail(this.destination, this.docId, this.privacy, this.start, this
+  GroupDetails(this.destination, this.docId, this.privacy, this.start, this
       .end, this.numberOfMembers , this.data);
 
   final RequestService _request = RequestService();
@@ -43,7 +43,7 @@ class GroupDetail extends StatelessWidget {
     timeDilation = 2.0;
     return Scaffold(
         appBar: AppBar(
-          title: Text('No one'),
+          title: Text('Group Details'),
         ),
         body: FutureBuilder(
           future: getUserDetails(),
