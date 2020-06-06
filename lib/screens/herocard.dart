@@ -45,137 +45,215 @@ class GroupDetail extends StatelessWidget {
         appBar: AppBar(
           title: Text('No one'),
         ),
-        body: Hero(
-          tag: docId,
-          child: Card(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25.0))),
-            elevation: 5,
-            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
-            child: Container(
-              height: 150,
+        body: FutureBuilder(
+          future: getUserDetails(),
+          builder: (ctx, futureSnapshot){
+            if (futureSnapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Flexible(
-                        fit: FlexFit.tight,
-                        flex: 1,
-                        child: Container(
-                            margin: EdgeInsets.only(
-                              left: 20,
-                              top: 20,
+                  Hero(
+                    tag: docId,
+                    child: Card(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                      elevation: 5,
+                      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+                      child: Container(
+                        height: 150,
+                        child: Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Flexible(
+                                  fit: FlexFit.tight,
+                                  flex: 1,
+                                  child: Container(
+                                      margin: EdgeInsets.only(
+                                        left: 20,
+                                        top: 20,
+                                      ),
+                                      child: destination == 'New Delhi Railway Station'
+                                          ? Icon(
+                                        Icons.train,
+                                        color: Theme.of(context).accentColor,
+                                        size: 30,
+                                      )
+                                          : Icon(
+                                        Icons.airplanemode_active,
+                                        color: Theme.of(context).accentColor,
+                                        size: 30,
+                                      )),
+                                ),
+                                Flexible(
+                                  fit: FlexFit.tight,
+                                  flex: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Text(
+                                      '${destination}',
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 2,
+                                  child: Container(
+                                    child: privacy == 'true'
+                                        ? Padding(
+                                      padding: const EdgeInsets.only(right: 15.0),
+                                      child: Icon(
+                                        Icons.lock,
+                                        color: Theme.of(context).accentColor,
+                                      ),
+                                    )
+                                        : !inGroup
+                                        ? FlatButton(
+                                      onPressed: () async {
+                                        try {
+                                          DocumentSnapshot temp = data;
+                                          await _request.joinGroup(temp.documentID);
+                                          await Navigator.of(context).pop();
+                                        } catch (e) {
+                                          print(e.toString());
+                                        }
+                                      },
+                                      child: Text('Join Now'),
+                                    )
+                                        : FlatButton(
+                                      onPressed: null,
+                                      child: Text('Already in group'),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                            child: destination == 'New Delhi Railway Station'
-                                ? Icon(
-                              Icons.train,
-                              color: Theme.of(context).accentColor,
-                              size: 30,
-                            )
-                                : Icon(
-                              Icons.airplanemode_active,
-                              color: Theme.of(context).accentColor,
-                              size: 30,
-                            )),
-                      ),
-                      Flexible(
-                        fit: FlexFit.tight,
-                        flex: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
-                            '${destination}',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: EdgeInsets.only(
+                                bottom: 5,
+                                top: 10,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'Start : ${DateFormat('dd.MM.yyyy - kk:mm a').format
+                                      (start)}',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Container(
-                          child: privacy == 'true'
-                              ? Padding(
-                            padding: const EdgeInsets.only(right: 15.0),
-                            child: Icon(
-                              Icons.lock,
-                              color: Theme.of(context).accentColor,
+                            Padding(
+                              padding: EdgeInsets.only(
+                                bottom: 5,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'End : ${DateFormat('dd.MM.yyyy - kk:mm a').format(end
+                                    )}',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          )
-                              : !inGroup
-                              ? FlatButton(
-                            onPressed: () async {
-                              try {
-                                DocumentSnapshot temp = data;
-                                await _request.joinGroup(temp.documentID);
-                                //print(temp.documentID);
-                                await Navigator.of(context).pop();
-                              } catch (e) {
-                                print(e.toString());
-                              }
-                            },
-                            child: Text('Join Now'),
-                          )
-                              : FlatButton(
-                            onPressed: null,
-                            child: Text('Already in group'),
-                          ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[Text('Number of members in group: '
+                                      '${numberOfMembers}')],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom: 5,
-                      top: 10,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Start : ${DateFormat('dd.MM.yyyy - kk:mm a').format
-                            (start)}',
-                          style: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom: 5,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'End : ${DateFormat('dd.MM.yyyy - kk:mm a').format(end
-                              )}',
-                          style: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[Text('Number of members in group: '
-                            '${numberOfMembers}')],
                       ),
-                    ],
+                    ),
                   ),
+                  SingleChildScrollView(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 60),
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: ListView.builder(
+                          itemCount: futureSnapshot.data.length,
+                          itemBuilder: (ctx, index) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                              width: double.infinity,
+                              child: Card(
+                                elevation: 4,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(futureSnapshot.data[index].data['name']),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(futureSnapshot.data[index].data['hostel']),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: IconButton(onPressed: () {}, icon: Icon(Icons.phone)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                    ),
+                  )
                 ],
               ),
-            ),
-          ),
+            );
+          }
         ),
+      bottomNavigationBar: FlatButton(
+        onPressed: () async {
+          try {
+            if (privacy == true || inGroup) {
+              null;
+            } else {
+              await _request.joinGroup(docId);
+              inGroup = true;
+            }
+          } catch (e) {
+            print(e.toString());
+          }
+        },
+        padding: EdgeInsets.all(20),
+        child: privacy == 'true'
+            ? Text(
+          'Request to Join',
+          style: TextStyle(fontSize: 20),
+        )
+            : inGroup
+            ? Text(
+          'Already in a Group',
+          style: TextStyle(fontSize: 20),
+        )
+            : Text('Join Now', style: TextStyle(fontSize: 20)),
+        color: Theme.of(context).accentColor,
+      ),
+
       );
   }
 }
+//
