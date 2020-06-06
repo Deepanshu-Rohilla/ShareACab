@@ -18,13 +18,17 @@ class GroupDetails extends StatelessWidget {
   final numberOfMembers;
   final data;
 
-  GroupDetails(this.destination, this.docId, this.privacy, this.start, this
-      .end, this.numberOfMembers , this.data);
+  GroupDetails(this.destination, this.docId, this.privacy, this.start, this.end,
+      this.numberOfMembers, this.data);
 
   final RequestService _request = RequestService();
 
   Future getUserDetails() async {
-    final userDetails = await Firestore.instance.collection('group').document(docId).collection('users').getDocuments();
+    final userDetails = await Firestore.instance
+        .collection('group')
+        .document(docId)
+        .collection('users')
+        .getDocuments();
     return userDetails.documents;
   }
 
@@ -33,7 +37,11 @@ class GroupDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentuser = Provider.of<FirebaseUser>(context);
-    Firestore.instance.collection('userdetails').document(currentuser.uid).get().then((value) {
+    Firestore.instance
+        .collection('userdetails')
+        .document(currentuser.uid)
+        .get()
+        .then((value) {
       if (value.data['currentGroup'] != null) {
         inGroup = true;
       } else {
@@ -47,7 +55,7 @@ class GroupDetails extends StatelessWidget {
       ),
       body: FutureBuilder(
           future: getUserDetails(),
-          builder: (ctx, futureSnapshot){
+          builder: (ctx, futureSnapshot) {
             if (futureSnapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
@@ -60,7 +68,9 @@ class GroupDetails extends StatelessWidget {
                     tag: docId,
                     child: Card(
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(25.0))),
                       elevation: 5,
                       margin: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
                       child: Container(
@@ -78,17 +88,20 @@ class GroupDetails extends StatelessWidget {
                                         left: 20,
                                         top: 20,
                                       ),
-                                      child: destination == 'New Delhi Railway Station'
+                                      child: destination ==
+                                              'New Delhi Railway Station'
                                           ? Icon(
-                                        Icons.train,
-                                        color: Theme.of(context).accentColor,
-                                        size: 30,
-                                      )
+                                              Icons.train,
+                                              color:
+                                                  Theme.of(context).accentColor,
+                                              size: 30,
+                                            )
                                           : Icon(
-                                        Icons.airplanemode_active,
-                                        color: Theme.of(context).accentColor,
-                                        size: 30,
-                                      )),
+                                              Icons.airplanemode_active,
+                                              color:
+                                                  Theme.of(context).accentColor,
+                                              size: 30,
+                                            )),
                                 ),
                                 Flexible(
                                   fit: FlexFit.tight,
@@ -110,29 +123,34 @@ class GroupDetails extends StatelessWidget {
                                   child: Container(
                                     child: privacy == 'true'
                                         ? Padding(
-                                      padding: const EdgeInsets.only(right: 15.0),
-                                      child: Icon(
-                                        Icons.lock,
-                                        color: Theme.of(context).accentColor,
-                                      ),
-                                    )
+                                            padding: const EdgeInsets.only(
+                                                right: 15.0),
+                                            child: Icon(
+                                              Icons.lock,
+                                              color:
+                                                  Theme.of(context).accentColor,
+                                            ),
+                                          )
                                         : !inGroup
-                                        ? FlatButton(
-                                      onPressed: () async {
-                                        try {
-                                          DocumentSnapshot temp = data;
-                                          await _request.joinGroup(temp.documentID);
-                                          await Navigator.of(context).pop();
-                                        } catch (e) {
-                                          print(e.toString());
-                                        }
-                                      },
-                                      child: Text('Join Now'),
-                                    )
-                                        : FlatButton(
-                                      onPressed: null,
-                                      child: Text('Already in group'),
-                                    ),
+                                            ? FlatButton(
+                                                onPressed: () async {
+                                                  try {
+                                                    DocumentSnapshot temp =
+                                                        data;
+                                                    await _request.joinGroup(
+                                                        temp.documentID);
+                                                    await Navigator.of(context)
+                                                        .pop();
+                                                  } catch (e) {
+                                                    print(e.toString());
+                                                  }
+                                                },
+                                                child: Text('Join Now'),
+                                              )
+                                            : FlatButton(
+                                                onPressed: null,
+                                                child: Text('Already in group'),
+                                              ),
                                   ),
                                 )
                               ],
@@ -146,8 +164,7 @@ class GroupDetails extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    'Start : ${DateFormat('dd.MM.yyyy - kk:mm a').format
-                                      (start)}',
+                                    'Start : ${DateFormat('dd.MM.yyyy - kk:mm a').format(start)}',
                                     style: TextStyle(
                                       fontSize: 15,
                                     ),
@@ -163,8 +180,7 @@ class GroupDetails extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    'End : ${DateFormat('dd.MM.yyyy - kk:mm a').format(end
-                                    )}',
+                                    'End : ${DateFormat('dd.MM.yyyy - kk:mm a').format(end)}',
                                     style: TextStyle(
                                       fontSize: 15,
                                     ),
@@ -176,8 +192,10 @@ class GroupDetails extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
                                 Column(
-                                  children: <Widget>[Text('Number of members in group: '
-                                      '${numberOfMembers}')],
+                                  children: <Widget>[
+                                    Text('Number of members in group: '
+                                        '${numberOfMembers}')
+                                  ],
                                 ),
                               ],
                             ),
@@ -194,24 +212,30 @@ class GroupDetails extends StatelessWidget {
                           itemCount: futureSnapshot.data.length,
                           itemBuilder: (ctx, index) {
                             return Container(
-                              margin: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 10),
                               width: double.infinity,
                               child: Card(
                                 elevation: 4,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: <Widget>[
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text(futureSnapshot.data[index].data['name']),
+                                      child: Text(futureSnapshot
+                                          .data[index].data['name']),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text(futureSnapshot.data[index].data['hostel']),
+                                      child: Text(futureSnapshot
+                                          .data[index].data['hostel']),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: IconButton(onPressed: () {}, icon: Icon(Icons.phone)),
+                                      child: IconButton(
+                                          onPressed: () {},
+                                          icon: Icon(Icons.phone)),
                                     ),
                                   ],
                                 ),
@@ -223,8 +247,7 @@ class GroupDetails extends StatelessWidget {
                 ],
               ),
             );
-          }
-      ),
+          }),
       bottomNavigationBar: FlatButton(
         onPressed: () async {
           try {
@@ -241,18 +264,17 @@ class GroupDetails extends StatelessWidget {
         padding: EdgeInsets.all(20),
         child: privacy == 'true'
             ? Text(
-          'Request to Join',
-          style: TextStyle(fontSize: 20),
-        )
+                'Request to Join',
+                style: TextStyle(fontSize: 20),
+              )
             : inGroup
-            ? Text(
-          'Already in a Group',
-          style: TextStyle(fontSize: 20),
-        )
-            : Text('Join Now', style: TextStyle(fontSize: 20)),
+                ? Text(
+                    'Already in a Group',
+                    style: TextStyle(fontSize: 20),
+                  )
+                : Text('Join Now', style: TextStyle(fontSize: 20)),
         color: Theme.of(context).accentColor,
       ),
-
     );
   }
 }
